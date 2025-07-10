@@ -114,6 +114,13 @@ hext_csr_restore:
   add t0, t0, s1
   HCSRS(CSRS_RESTORE)
 
+counter_ext_csr_restore:
+  li t0, CSR_REG_CPT_ADDR
+  jal ra, get_restorer_entry_pc
+  add t0, t0, s1
+  CSRS_MHPMEVENTS(CSRS_RESTORE)
+  CSRS_MHPMCOUNTERS(CSRS_RESTORE)
+
 vext_restore:
   csrr t0, misa
   li t1, MISA_V
@@ -198,6 +205,9 @@ restore_float_vector:
   fld f31, (31*8)(sp)
 
 restore_int_vector:
+  csrr sp, mhpmcounter7
+  jal main
+
   li sp, INT_REG_CPT_ADDR # load int section addr
   jal ra, get_restorer_entry_pc
   add sp, sp, s1 # load int section addr
@@ -238,6 +248,106 @@ restore_int_vector:
 read_complete_flag:
   .word COMPLETE_FLAG
   .word 0x0
+
+  .section ".trap_wrapper", "ax", %progbits
+  .align 4
+_trap_handler_wrapper:
+  csrrw sp, mhpmcounter7, sp
+
+  addi sp, sp, -(32 * 8)
+  sd x1, (1*8)(sp)   /* ra */
+  sd x3, (3*8)(sp)   /* gp */
+  sd x4, (4*8)(sp)   /* tp */
+  sd x5, (5*8)(sp)   /* t0 */
+  sd x6, (6*8)(sp)   /* t1 */
+  sd x7, (7*8)(sp)   /* t2 */
+  sd x8, (8*8)(sp)   /* s0/fp */
+  sd x9, (9*8)(sp)   /* s1 */
+  sd x18, (18*8)(sp) /* s2 */
+  sd x19, (19*8)(sp) /* s3 */
+  sd x20, (20*8)(sp)
+  sd x21, (21*8)(sp)
+  sd x22, (22*8)(sp)
+  sd x23, (23*8)(sp)
+  sd x24, (24*8)(sp)
+  sd x25, (25*8)(sp)
+  sd x26, (26*8)(sp)
+  sd x27, (27*8)(sp) /* s11 */
+  sd x28, (28*8)(sp) /* t3 */
+  sd x29, (29*8)(sp) /* t4 */
+  sd x30, (30*8)(sp) /* t5 */
+  sd x31, (31*8)(sp) /* t6 */
+
+
+
+  csrr t2, mcause
+
+  li t3, 0x800000000000000d
+  bne t2, t3, jump_opensbi_trap_handler
+
+  sd x10, (10*8)(sp) /* a0 */
+  sd x11, (11*8)(sp) /* a1 */
+  sd x12, (12*8)(sp) /* a2 */
+  sd x13, (13*8)(sp)
+  sd x14, (14*8)(sp)
+  sd x15, (15*8)(sp)
+  sd x16, (16*8)(sp)
+  sd x17, (17*8)(sp) /* a7 */
+
+  jal main
+
+  ld x10, (10*8)(sp) /* a0 */
+  ld x11, (11*8)(sp) /* a1 */
+  ld x12, (12*8)(sp) /* a2 */
+  ld x13, (13*8)(sp)
+  ld x14, (14*8)(sp)
+  ld x15, (15*8)(sp)
+  ld x16, (16*8)(sp)
+  ld x17, (17*8)(sp) /* a7 */
+
+_trap_handler_exit_wrapper:
+  ld x1, (1*8)(sp)   /* ra */
+  ld x3, (3*8)(sp)   /* gp */
+  ld x4, (4*8)(sp)   /* tp */
+  ld x5, (5*8)(sp)   /* t0 */
+  ld x6, (6*8)(sp)   /* t1 */
+  ld x7, (7*8)(sp)   /* t2 */
+  ld x8, (8*8)(sp)   /* s0/fp */
+  ld x9, (9*8)(sp)   /* s1 */
+  ld x18, (18*8)(sp) /* s2 */
+  ld x19, (19*8)(sp) /* s3 */
+  ld x20, (20*8)(sp)
+  ld x21, (21*8)(sp)
+  ld x22, (22*8)(sp)
+  ld x23, (23*8)(sp)
+  ld x24, (24*8)(sp)
+  ld x25, (25*8)(sp)
+  ld x26, (26*8)(sp)
+  ld x27, (27*8)(sp) /* s11 */
+  ld x28, (28*8)(sp) /* t3 */
+  ld x29, (29*8)(sp) /* t4 */
+  ld x30, (30*8)(sp) /* t5 */
+  ld x31, (31*8)(sp) /* t6 */
+
+  addi sp, sp, 32*8
+  csrrw sp, mhpmcounter7, sp
+
+  mret
+
+jump_opensbi_trap_handler:
+  csrr t5, mhpmcounter8
+  jalr ra, t5, 0
+  j _trap_handler_exit_wrapper
+
+
+.align 4
+mret_instead_by:
+/* only used to generate target instruction to use in helper_wrapper.pyx */
+  jr t4
+  nop
+  ret
+  nop
+
 
   .section ".payload", "ax", %progbits
   .align 4

@@ -13,6 +13,7 @@ SECTIONS
 
   /* Beginning of code and text segment */
   . = ALIGN(4);
+  . = 0x80000000;
 
   gcpt_begin = .;
 
@@ -40,15 +41,31 @@ SECTIONS
     *(.restore.flag)
   }
 
+  .trap_wrapper :
+  {
+    *(.trap_wrapper)
+  }
+
+  .text :
+  {
+    *(.text .text.*)
+  }
+
+  .rodata :
+  {
+    *(.rodata .rodata.*)
+  }
+
+  .data :
+  {
+    *(.data .data.*)
+  }
+
+  .bss :
+  {
+    *(.bss .bss.*)
+  }
+
   gcpt_end = .;
 
-
-  . = gcpt_begin + 0x100000;
-  .payload :
-  {
-    PROVIDE(_payload_start = .);
-    *(.payload)
-    . = ALIGN(8);
-    PROVIDE(_payload_end = .);
-  }
 }

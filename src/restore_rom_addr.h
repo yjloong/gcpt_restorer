@@ -20,7 +20,7 @@
 #define BOOT_CODE               0x0
 
 #define BOOT_FLAG_ADDR          0xECDB0
-#define PC_CPT_ADDR             0xECDB8
+#define PC_CPT_ADDR             0xECDB8 // same with CSR_MEPC
 #define MODE_CPT_ADDR           0xECDC0
 #define MTIME_CPT_ADDR          0xECDC8
 #define MTIME_CMP_CPT_ADDR      0xECDD0

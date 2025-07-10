@@ -46,7 +46,24 @@
   f(vsstatus   , 0x200) f(vstvec     , 0x205) \
   f(vsscratch  , 0x240) f(vsepc      , 0x241) f(vscause    , 0x242) \
   f(vstval     , 0x243) f(vsip       , 0x244) f(vsatp      , 0x280) \
-  f(mtval2     , 0x34b) f(mtinst     , 0x34A)
+  f(mtval2     , 0x34b) f(mtinst     , 0x34A) f(mcycle     , 0xB00) f(mcountinhibit  , 0x320)
+
+#define CSRS_MHPMEVENTS(f) \
+  f(mhpmevent3, 0x323) f(mhpmevent4, 0x324) f(mhpmevent5, 0x325) f(mhpmevent6, 0x326) f(mhpmevent7, 0x327) \
+  f(mhpmevent8, 0x328) f(mhpmevent9, 0x329) f(mhpmevent10, 0x32a) f(mhpmevent11, 0x32b) f(mhpmevent12, 0x32c) \
+  f(mhpmevent13, 0x32d) f(mhpmevent14, 0x32e) f(mhpmevent15, 0x32f) f(mphmevent16, 0x330) f(mhpmevent17, 0x331) \
+  f(mhpmevent18, 0x332) f(mhpmevent19, 0x333) f(mhpmevent20, 0x334) f(mhpmevent21, 0x335) f(mhpmevent22, 0x336) \
+  f(mhpmevent23, 0x337) f(mhpmevent24, 0x338) f(mhpmevent25, 0x339) f(mhpmevent26, 0x33a) f(mhpmevent27, 0x33b) \
+  f(mhpmevent28, 0x33c) f(mhpmevent29, 0x33d) f(mhpmevent30, 0x33e) f(mhpmevent31, 0x33f)
+
+#define CSRS_MHPMCOUNTERS(f) \
+  f(mhpmcounter3, 0xb03) f(mhpmcounter4, 0xb04) f(mhpmcounter5, 0xb05) f(mhpmcounter6, 0xb06) f(mhpmcounter7, 0xb07) \
+  f(mhpmcounter8, 0xb08) f(mhpmcounter9, 0xb09) f(mhpmcounter10, 0xb0a) f(mhpmcounter11, 0xb0b) f(mhpmcounter12, 0xb0c) \
+  f(mhpmcounter13, 0xb0d) f(mhpmcounter14, 0xb0e) f(mhpmcounter15, 0xb0f) f(mhpmcounter16, 0xb10) f(mhpmcounter17, 0xb11) \
+  f(mhpmcounter18, 0xb12) f(mhpmcounter19, 0xb13) f(mhpmcounter20, 0xb14) f(mhpmcounter21, 0xb15) f(mhpmcounter22, 0xb16) \
+  f(mhpmcounter23, 0xb17) f(mhpmcounter24, 0xb18) f(mhpmcounter25, 0xb19) f(mhpmcounter26, 0xb1a) f(mhpmcounter27, 0xb1b) \
+  f(mhpmcounter28, 0xb1c) f(mhpmcounter29, 0xb1d) f(mhpmcounter30, 0xb1e) f(mhpmcounter31, 0xb1f)
+
 
 #define VL_ID (0xc20)
 #define VTYPE_ID (0xc21)
